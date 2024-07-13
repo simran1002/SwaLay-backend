@@ -6,23 +6,16 @@ import response from '../../../../lib/response';
 // Handle the POST request to create a new payment
 export async function POST(request: NextRequest) {
   await connect();
-  console.log("Payment check")
   try {
     // Parse the request body
     const reqBody = await request.json();
-    console.log(reqBody)
     const { labelId, label, amount, status, time } = reqBody;
 
     // Validate required fields
     if (!labelId || !label || !amount || !time) {
-      return NextResponse.json(response(400, null, false, "Please provide all required fields"));
+      const { nextResponse } = response(400, null, false, "Please provide all required fields");
+      return nextResponse;
     }
-
-    // // Check if a payment with the same ID already exists
-    // const existingPayment = await Payment.findOne({ labelId });
-    // if (existingPayment) {
-    //   return NextResponse.json(response(400, null, false, "Payment with this ID already exists"));
-    // }
 
     // Create a new payment
     const newPayment = new Payment({
@@ -37,9 +30,11 @@ export async function POST(request: NextRequest) {
     const savedPayment = await newPayment.save();
 
     // Respond with the saved payment data
-    return NextResponse.json(response(201, savedPayment, true, "Payment created successfully"));
+    const { nextResponse } = response(201, savedPayment, true, "Payment created successfully");
+    return nextResponse;
   } catch (error: any) {
     // Handle any errors that occur during the process
-    return NextResponse.json(response(500, error.message, false, "An error occurred while creating the payment"));
+    const { nextResponse } = response(500, error.message, false, "An error occurred while creating the payment");
+    return nextResponse;
   }
 }
