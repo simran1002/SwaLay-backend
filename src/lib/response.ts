@@ -1,3 +1,5 @@
+import { NextResponse } from 'next/server';
+
 // Define a type for your response structure
 export type ResponseType = {
     status: number;
@@ -6,13 +8,18 @@ export type ResponseType = {
     message: string;
 };
 
-// Function to create a standardized response
-export const response = (status: number, data: any, success: boolean, message: string): ResponseType => {
-    return {
+// Function to create a standardized response and NextResponse object
+export const response = (status: number, data: any, success: boolean, message: string) => {
+    const responseObject: ResponseType = {
         status,
         data,
         success,
         message,
+    };
+
+    return {
+        responseObject,
+        nextResponse: NextResponse.json(responseObject, { status }),
     };
 };
 
