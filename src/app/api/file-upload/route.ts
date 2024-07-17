@@ -1,8 +1,7 @@
-// src/app/api/file-upload/route.ts
-
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import md5 from 'md5';
 import { Readable } from 'stream';
 
 const streamToNodeStream = (readableStream: ReadableStream<Uint8Array>): Readable => {
@@ -29,9 +28,10 @@ export async function POST(req: NextRequest) {
     const fileName = searchParams.get('fileName');
     const chunkIndex = searchParams.get('chunkIndex');
     const chunkCount = searchParams.get('chunkCount');
+    const hash = searchParams.get('hash');
 
     // Check if any required parameter is missing
-    if (!fileName || !chunkIndex || !chunkCount) {
+    if (!fileName || !chunkIndex || !chunkCount || !hash) {
       throw new Error('Missing required parameters');
     }
 
@@ -54,6 +54,10 @@ export async function POST(req: NextRequest) {
         const chunkIndexNumber = parseInt(chunkIndex, 10);
         const chunkCountNumber = parseInt(chunkCount, 10);
 
+        // Calculate progress
+        const progress = `${chunkIndexNumber + 1} of ${chunkCountNumber} chunks uploaded`;
+        const percentage = `${((chunkIndexNumber + 1) / chunkCountNumber) * 100}%`;
+
         // If all chunks are received, combine them into a final file
         if (chunkIndexNumber + 1 === chunkCountNumber) {
           const finalPath = path.join(process.cwd(), 'uploads', fileName);
@@ -66,17 +70,36 @@ export async function POST(req: NextRequest) {
           }
           writeStream.end();
           fs.rmdirSync(chunksDir); // Remove chunks directory
+
+          // Verify MD5 hash
+          const finalBuffer = fs.readFileSync(finalPath);
+          const finalHash = md5(finalBuffer);
+
+          if (finalHash !== hash) {
+            fs.unlinkSync(finalPath); // Remove the final file if hash mismatch
+            return resolve(NextResponse.json({ message: 'Hash mismatch' }, { status: 400 }));
+          }
         }
-        resolve(NextResponse.json({ message: 'Chunk uploaded' }));
+        resolve(
+          NextResponse.json({
+            status: 'success',
+            data: {
+              message: 'Chunk uploaded',
+              percentage,
+              progress
+            }
+          })
+        );
       });
 
       fileStream.on('error', (err) => {
-        reject(NextResponse.json({ message: 'Error uploading chunk', error: err.message }, { status: 500 }));
+        reject(
+          NextResponse.json({ message: 'Error uploading chunk', error: err.message }, { status: 500 })
+        );
       });
     });
-  }  catch (error: any) {
+  } catch (error: any) {
     console.error('Error processing file upload:', error);
     return NextResponse.json({ message: 'Error uploading chunk', error: error.message }, { status: 400 });
   }
-  
 }
