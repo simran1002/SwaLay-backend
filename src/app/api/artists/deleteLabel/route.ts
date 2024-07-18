@@ -1,22 +1,19 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { connect } from '@/dbConfig/dbConfig';
-import Label, { ILabel } from '@/models/label'; // Adjust path as needed
+// src/pages/api/deleteLabel.ts
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+import { NextRequest, NextResponse } from 'next/server';
+import { connect } from '@/dbConfig/dbConfig';
+import Label from '@/models/label'; // Adjust path as needed
+
+export async function DELETE(request: NextRequest) {
   await connect(); // Connect to the database
 
-  // Ensure the request method is DELETE
-  if (req.method !== 'DELETE') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
   // Extract labelId from query parameters
-  const { labelId } = req.query;
+  const labelId = request.nextUrl.searchParams.get("labelId")
 
   try {
     // Validate labelId format
     if (!labelId || typeof labelId !== 'string') {
-      return res.status(400).json({ message: 'Invalid labelId' });
+      return NextResponse.json({ message: 'Invalid labelId' }, { status: 400 });
     }
 
     // Attempt to delete label by labelId
@@ -24,13 +21,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Check if label was found and deleted
     if (!deletedLabel) {
-      return res.status(404).json({ message: 'Label not found' });
+      return NextResponse.json({ message: 'Label not found' }, { status: 404 });
     }
 
     // Return success message upon successful deletion
-    res.json({ message: 'Label deleted successfully' });
+    return NextResponse.json({ message: 'Label deleted successfully' });
   } catch (error: any) {
     // Handle server errors
-    res.status(500).json({ message: error.message });
+    console.error('Error deleting label:', error);
+    return NextResponse.json({ message: error.message || 'An unknown error occurred' }, { status: 500 });
   }
 }
