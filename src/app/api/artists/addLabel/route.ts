@@ -56,13 +56,13 @@ export async function POST(req: NextRequest) {
         // If it's an EEXIST error, we can safely ignore it
       }
 
-      // Save the file
+      // Save the file with a unique filename
       const filename = `${Date.now()}-${profileImage.name}`;
       const filepath = path.join(uploadsDir, filename);
       await writeFile(filepath, buffer);
 
-      // Store the file buffer in the database
-      labelData.profileImage = buffer;
+      // Store the file path in the database
+      labelData.profileImage = filename; // Store filename or filepath as per your needs
     }
 
     // Create and save the new label
