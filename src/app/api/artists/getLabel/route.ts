@@ -6,9 +6,7 @@ export async function GET(request: NextRequest) {
   await connect(); // Connect to the database
 
   try {
-    // Extract query parameters using request.query
-    // const artistName = request.query.artistName as string | undefined;
-    // const artistName = request.query;
+    
     const artistName = request.nextUrl.searchParams.get("artistName")
     console.log(artistName);
    

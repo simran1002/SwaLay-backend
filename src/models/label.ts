@@ -70,7 +70,7 @@ const labelSchema: Schema = new Schema({
     }
   },
   profileImage: {
-    type: Buffer,
+    type: String,
     required: false,
   },
 });
