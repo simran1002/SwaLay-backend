@@ -1,14 +1,18 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { connect } from '@/dbConfig/dbConfig';
 import Label, { ILabel } from '@/models/label'; // Adjust path as needed
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
-export async function GET(request: NextApiRequest) {
+export async function GET(request: NextRequest) {
   await connect(); // Connect to the database
 
   try {
     // Extract query parameters using request.query
-    const artistName = request.query.artistName as string | undefined;
+    // const artistName = request.query.artistName as string | undefined;
+    // const artistName = request.query;
+    const artistName = request.nextUrl.searchParams.get("artistName")
+    console.log(artistName);
+   
+
 
     if (!artistName) {
       // If artistName is not provided, fetch all labels
