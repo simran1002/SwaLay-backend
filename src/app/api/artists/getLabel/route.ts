@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { connect } from '@/dbConfig/dbConfig';
 import Label, { ILabel } from '@/models/label'; // Adjust path as needed
+import { NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextApiRequest) {
   await connect(); // Connect to the database
 
   try {
