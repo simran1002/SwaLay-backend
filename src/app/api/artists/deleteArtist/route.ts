@@ -1,8 +1,8 @@
-// src/pages/api/deleteLabel.ts
+// src/pages/api/deleteArtist.ts
 
 import { NextRequest, NextResponse } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig';
-import Label from '@/models/artist'; // Adjust path as needed
+import artist from '@/models/artist'; // Adjust path as needed
 
 export async function DELETE(request: NextRequest) {
   await connect(); // Connect to the database
@@ -16,19 +16,19 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ message: 'Invalid labelId' }, { status: 400 });
     }
 
-    // Attempt to delete label by labelId
-    const deletedLabel = await Label.findByIdAndDelete(labelId);
+    // Attempt to delete artist by labelId
+    const deletedartist = await artist.findByIdAndDelete(labelId);
 
-    // Check if label was found and deleted
-    if (!deletedLabel) {
-      return NextResponse.json({ message: 'Label not found' }, { status: 404 });
+    // Check if artist was found and deleted
+    if (!deletedartist) {
+      return NextResponse.json({ message: 'artist not found' }, { status: 404 });
     }
 
     // Return success message upon successful deletion
-    return NextResponse.json({ message: 'Label deleted successfully' });
+    return NextResponse.json({ message: 'artist deleted successfully' });
   } catch (error: any) {
     // Handle server errors
-    console.error('Error deleting label:', error);
+    console.error('Error deleting artist:', error);
     return NextResponse.json({ message: error.message || 'An unknown error occurred' }, { status: 500 });
   }
 }

@@ -1,8 +1,8 @@
-// src/models/label.ts
+// src/models/artist.ts
 
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IArtist extends Document {
+export interface Iartist extends Document {
   labelId: mongoose.Schema.Types.ObjectId;
   artistName: string;
   iprs: boolean;
@@ -29,7 +29,7 @@ const artistSchema: Schema = new Schema({
   },
   iprsNumber: {
     type: Number,
-    required: function (this: IArtist) {
+    required: function (this: Iartist) {
       return this.iprs;
     },
   },
@@ -75,4 +75,4 @@ const artistSchema: Schema = new Schema({
   },
 });
 
-export default mongoose.models.Artist || mongoose.model<IArtist>('Artist', artistSchema);
+export default mongoose.models.artist || mongoose.model<Iartist>('artist', artistSchema);

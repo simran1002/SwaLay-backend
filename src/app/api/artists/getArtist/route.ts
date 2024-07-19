@@ -1,5 +1,5 @@
 import { connect } from '@/dbConfig/dbConfig';
-import Label, { ILabel } from '@/models/artist'; // Adjust path as needed
+import artist, { Iartist } from '@/models/artist'; // Adjust path as needed
 import { NextResponse, NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -13,18 +13,18 @@ export async function GET(request: NextRequest) {
 
 
     if (!artistName) {
-      // If artistName is not provided, fetch all labels
-      const labels = await Label.find();
-      return NextResponse.json({ data: labels, message: 'All Labels fetched successfully', success: true });
+      // If artistName is not provided, fetch all artists
+      const artists = await artist.find();
+      return NextResponse.json({ data: artists, message: 'All artists fetched successfully', success: true });
     } else {
-      // If artistName is provided, find label(s) by artistName
-      const labels = await Label.find({ artistName: { $regex: new RegExp(artistName, 'i') } });
+      // If artistName is provided, find artist(s) by artistName
+      const artists = await artist.find({ artistName: { $regex: new RegExp(artistName, 'i') } });
 
-      if (labels.length === 0) {
-        return NextResponse.json({ status: 404, message: 'No labels found for the specified artistName', success: false });
+      if (artists.length === 0) {
+        return NextResponse.json({ status: 404, message: 'No artists found for the specified artistName', success: false });
       }
 
-      return NextResponse.json({ data: labels, message: 'Labels found successfully', success: true });
+      return NextResponse.json({ data: artists, message: 'artists found successfully', success: true });
     }
   } catch (error: any) {
     return NextResponse.json({ status: 500, message: error.message, success: false });

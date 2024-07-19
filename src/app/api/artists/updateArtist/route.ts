@@ -1,8 +1,8 @@
-// src/app/api/updateLabel.ts
+// src/app/api/updateArtist.ts
 
 import { NextRequest, NextResponse } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig';
-import Label from '@/models/artist';
+import artist from '@/models/artist';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 
@@ -32,21 +32,21 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'IPRS number is required when IPRS is true', success: false }, { status: 400 });
     }
 
-    // Find the label to update
-    const existingLabel = await Label.findById(labelId);
+    // Find the artist to update
+    const existingartist = await artist.findById(labelId);
 
-    if (!existingLabel) {
-      return NextResponse.json({ error: 'Label not found', success: false }, { status: 404 });
+    if (!existingartist) {
+      return NextResponse.json({ error: 'artist not found', success: false }, { status: 404 });
     }
 
-    // Update label object
-    existingLabel.artistName = artistName;
-    existingLabel.iprs = iprs;
-    existingLabel.iprsNumber = iprsNumber;
-    existingLabel.facebook = facebook;
-    existingLabel.appleMusic = appleMusic;
-    existingLabel.spotify = spotify;
-    existingLabel.instagramUsername = instagramUsername;
+    // Update artist object
+    existingartist.artistName = artistName;
+    existingartist.iprs = iprs;
+    existingartist.iprsNumber = iprsNumber;
+    existingartist.facebook = facebook;
+    existingartist.appleMusic = appleMusic;
+    existingartist.spotify = spotify;
+    existingartist.instagramUsername = instagramUsername;
 
     // Handle profile image update
     if (profileImage) {
@@ -70,15 +70,15 @@ export async function PUT(req: NextRequest) {
       await writeFile(filepath, buffer);
 
       // Update profile image path in the database
-      existingLabel.profileImage = filename; // Store filename or filepath as per your needs
+      existingartist.profileImage = filename; // Store filename or filepath as per your needs
     }
 
-    // Save the updated label
-    const updatedLabel = await existingLabel.save();
+    // Save the updated artist
+    const updatedartist = await existingartist.save();
 
-    return NextResponse.json({ message: 'Label updated successfully', label: updatedLabel, success: true }, { status: 200 });
+    return NextResponse.json({ message: 'artist updated successfully', artist: updatedartist, success: true }, { status: 200 });
   } catch (error: any) {
-    console.error('Error updating label:', error);
+    console.error('Error updating artist:', error);
     return NextResponse.json({
       error: error.message || 'An unknown error occurred',
       success: false,

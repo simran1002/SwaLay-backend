@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig';
-import Label from '@/models/artist';
+import artist from '@/models/artist';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
     // Validate required fields
     if (!artistName) {
-      return NextResponse.json({ error: 'Artist name is required', success: false }, { status: 400 });
+      return NextResponse.json({ error: 'artist name is required', success: false }, { status: 400 });
     }
 
     // Validate iprsNumber if iprs is true
@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'IPRS number is required when IPRS is true', success: false }, { status: 400 });
     }
 
-    // Create label object
-    const labelData: any = {
+    // Create artist object
+    const artistData: any = {
       artistName,
       iprs,
       iprsNumber,
@@ -62,16 +62,16 @@ export async function POST(req: NextRequest) {
       await writeFile(filepath, buffer);
 
       // Store the file path in the database
-      labelData.profileImage = filename; // Store filename or filepath as per your needs
+      artistData.profileImage = filename; // Store filename or filepath as per your needs
     }
 
-    // Create and save the new label
-    const newLabel = new Label(labelData);
-    const savedLabel = await newLabel.save();
+    // Create and save the new artist
+    const newartist = new artist(artistData);
+    const savedartist = await newartist.save();
 
-    return NextResponse.json({ message: 'Label created successfully', label: savedLabel, success: true }, { status: 201 });
+    return NextResponse.json({ message: 'Artist created successfully', artist: savedartist, success: true }, { status: 201 });
   } catch (error: any) {
-    console.error('Error creating label:', error);
+    console.error('Error creating artist:', error);
     return NextResponse.json({
       error: error.message || 'An unknown error occurred',
       success: false,

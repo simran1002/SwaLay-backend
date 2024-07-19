@@ -46,3 +46,5 @@ youtubeSchema.index({ id: 1 }, { unique: true });
 const Youtube = mongoose.models.Youtube || mongoose.model<IYoutube>('Youtube', youtubeSchema);
 
 export default Youtube;
+
+//AlbumId, trackId, remove uid, status update boolean
