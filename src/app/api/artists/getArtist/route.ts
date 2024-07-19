@@ -1,5 +1,5 @@
 import { connect } from '@/dbConfig/dbConfig';
-import Label, { ILabel } from '@/models/label'; // Adjust path as needed
+import Label, { ILabel } from '@/models/artist'; // Adjust path as needed
 import { NextResponse, NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {

@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig';
-import Label from '@/models/label'; // Adjust path as needed
+import Label from '@/models/artist'; // Adjust path as needed
 
 export async function DELETE(request: NextRequest) {
   await connect(); // Connect to the database

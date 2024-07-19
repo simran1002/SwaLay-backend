@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig';
-import Label from '@/models/label';
+import Label from '@/models/artist';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 

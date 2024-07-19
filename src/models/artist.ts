@@ -2,7 +2,7 @@
 
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface ILabel extends Document {
+export interface IArtist extends Document {
   labelId: mongoose.Schema.Types.ObjectId;
   artistName: string;
   iprs: boolean;
@@ -14,7 +14,7 @@ export interface ILabel extends Document {
   profileImage?: Buffer;
 }
 
-const labelSchema: Schema = new Schema({
+const artistSchema: Schema = new Schema({
   labelId: {
     type: mongoose.Schema.Types.ObjectId,
     auto: true,
@@ -29,7 +29,7 @@ const labelSchema: Schema = new Schema({
   },
   iprsNumber: {
     type: Number,
-    required: function (this: ILabel) {
+    required: function (this: IArtist) {
       return this.iprs;
     },
   },
@@ -75,4 +75,4 @@ const labelSchema: Schema = new Schema({
   },
 });
 
-export default mongoose.models.Label || mongoose.model<ILabel>('Label', labelSchema);
+export default mongoose.models.Artist || mongoose.model<IArtist>('Artist', artistSchema);
