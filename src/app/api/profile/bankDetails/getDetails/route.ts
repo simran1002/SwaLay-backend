@@ -1,28 +1,27 @@
-// pages/api/bank-details/[labelId].ts
-
-import type { NextApiRequest, NextApiResponse } from 'next';
-import {connect} from '@/dbConfig/dbConfig';
+import { NextRequest, NextResponse } from 'next/server';
+import { connect } from '@/dbConfig/dbConfig';
 import ProfileBankDetails from '@/models/profileBank';
 
-export async function GET(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-
-
-  const { labelId } = req.query;
-
+export async function GET(request: NextRequest) {
   try {
     await connect();
+
+    const { searchParams } = new URL(request.url);
+    const labelId = searchParams.get('labelId');
+
+    if (!labelId) {
+      return NextResponse.json({ error: 'labelId is required' }, { status: 400 });
+    }
 
     const bankDetails = await ProfileBankDetails.findOne({ labelId });
 
     if (!bankDetails) {
-      return res.status(404).json({ message: 'Bank details not found' });
+      return NextResponse.json({ error: 'Bank details not found' }, { status: 404 });
     }
 
-    res.status(200).json(bankDetails);
+    return NextResponse.json(bankDetails);
   } catch (error) {
-    res.status(400).json({ message: 'Error fetching bank details', error });
+    console.error('Error fetching bank details:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
