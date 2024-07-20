@@ -1,21 +1,19 @@
-// pages/api/bank-details/update.ts
+// src/app/api/profile/bankDetails/update/route.ts
 
-import type { NextApiRequest, NextApiResponse } from 'next';
-import {connect} from '@/dbConfig/dbConfig';
+import { NextRequest, NextResponse } from 'next/server';
+import { connect } from '@/dbConfig/dbConfig';
 import ProfileBankDetails from '@/models/profileBank';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== 'PUT') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
-  const { labelId, ...updateData } = req.body;
-
+export async function PUT(request: NextRequest) {
   try {
     await connect();
+
+    const body = await request.json();
+    const { labelId, ...updateData } = body;
+
+    if (!labelId) {
+      return NextResponse.json({ error: 'labelId is required' }, { status: 400 });
+    }
 
     const updatedBankDetails = await ProfileBankDetails.findOneAndUpdate(
       { labelId },
@@ -24,11 +22,12 @@ export default async function handler(
     );
 
     if (!updatedBankDetails) {
-      return res.status(404).json({ message: 'Bank details not found' });
+      return NextResponse.json({ error: 'Bank details not found' }, { status: 404 });
     }
 
-    res.status(200).json(updatedBankDetails);
+    return NextResponse.json(updatedBankDetails);
   } catch (error) {
-    res.status(400).json({ message: 'Error updating bank details', error });
+    console.error('Error updating bank details:', error);
+    return NextResponse.json({ error: 'Error updating bank details' }, { status: 400 });
   }
 }
