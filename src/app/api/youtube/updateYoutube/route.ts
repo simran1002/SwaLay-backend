@@ -1,20 +1,23 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import nextConnect from 'next-connect';
+import { NextRequest, NextResponse } from 'next/server';
+import { connect } from '@/dbConfig/dbConfig';
 import mongoose from 'mongoose';
-import Youtube from '../../../../models/youtube';
+import Youtube from '../../../../models/youtube'; // adjust the path as necessary
 
-const handler = nextConnect();
-
-handler.patch(async (req: NextApiRequest, res: NextApiResponse) => {
+export async function PUT(req: NextRequest) {
   try {
-    await mongoose.connect(process.env.MONGODB_URI!, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await connect();
 
-    const { id } = req.query;
-    const { status } = req.body;
+    // Extract the id from the query parameters
+    const id = req.nextUrl.searchParams.get('id');
+    if (!id) {
+      return NextResponse.json({ message: 'ID is required' }, { status: 400 });
+    }
 
+    // Parse the request body
+    const body = await req.json();
+    const { status } = body;
+
+    // Update the Youtube entry status
     const updatedYoutube = await Youtube.findOneAndUpdate(
       { id: Number(id) },
       { status },
@@ -22,15 +25,14 @@ handler.patch(async (req: NextApiRequest, res: NextApiResponse) => {
     );
 
     if (!updatedYoutube) {
-      return res.status(404).json({ message: 'Youtube copyright entry not found' });
+      return NextResponse.json({ message: 'Youtube copyright entry not found' }, { status: 404 });
     }
 
-    res.status(200).json({ message: 'Youtube copyright entry status updated', data: updatedYoutube });
+    return NextResponse.json({ message: 'Youtube copyright entry status updated', data: updatedYoutube }, { status: 200 });
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error', error });
+    console.error('Internal server error:', error);
+    return NextResponse.json({ message: 'Internal server error', error }, { status: 500 });
   } finally {
     mongoose.connection.close();
   }
-});
-
-export default handler;
+}
