@@ -76,10 +76,9 @@ const albumSchema: Schema = new Schema({
     type: String, 
     required: true,
   },
-  status: { 
-    type: Number, 
-    default: 0,
-    max: 99999999999, 
+  status: {
+    type: Boolean,
+    default: null
   },
   tracks: { 
     type: Number, 
