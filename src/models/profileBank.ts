@@ -1,6 +1,7 @@
+// src/models/profileBank.ts
 import mongoose, { Document, Schema, Model } from 'mongoose';
+import { encrypt, decrypt } from '@/lib/cryptoUtils';
 
-// Interface for the ProfileBankDetails document
 interface IProfileBankDetails extends Document {
   labelId: mongoose.Schema.Types.ObjectId;
   accountHolderName: string;
@@ -13,7 +14,6 @@ interface IProfileBankDetails extends Document {
   gstNo: string;
 }
 
-// Schema definition
 const ProfileBankDetailsSchema: Schema = new Schema({
   labelId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -63,14 +63,42 @@ const ProfileBankDetailsSchema: Schema = new Schema({
   }
 });
 
-// Model creation
+// Pre-save hook to encrypt sensitive fields
+ProfileBankDetailsSchema.pre<IProfileBankDetails>('save', function(next) {
+  if (this.isModified('accountNumber')) {
+    this.accountNumber = encrypt(this.accountNumber);
+  }
+  if (this.isModified('ifscCode')) {
+    this.ifscCode = encrypt(this.ifscCode);
+  }
+  if (this.isModified('upiId')) {
+    this.upiId = encrypt(this.upiId);
+  }
+  if (this.isModified('pan')) {
+    this.pan = encrypt(this.pan);
+  }
+  if (this.isModified('gstNo')) {
+    this.gstNo = encrypt(this.gstNo);
+  }
+  next();
+});
+
+// Post-find hook to decrypt sensitive fields
+ProfileBankDetailsSchema.post<IProfileBankDetails>('findOne', function(doc: IProfileBankDetails | null) {
+  if (doc) {
+    doc.accountNumber = decrypt(doc.accountNumber);
+    doc.ifscCode = decrypt(doc.ifscCode);
+    doc.upiId = decrypt(doc.upiId);
+    doc.pan = decrypt(doc.pan);
+    doc.gstNo = decrypt(doc.gstNo);
+  }
+});
+
 let ProfileBankDetails: Model<IProfileBankDetails>;
 
 try {
-  // Try to get the existing model
   ProfileBankDetails = mongoose.model<IProfileBankDetails>('ProfileBankDetails');
 } catch {
-  // If the model doesn't exist, create a new one
   ProfileBankDetails = mongoose.model<IProfileBankDetails>('ProfileBankDetails', ProfileBankDetailsSchema);
 }
 
