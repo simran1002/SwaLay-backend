@@ -1,25 +1,26 @@
-// pages/api/tracks/[id].ts
-import { NextRequest, NextResponse } from 'next/server';
-import { connect } from '@/dbConfig/dbConfig';
-import Track from '@/models/track';
+import { NextApiRequest, NextApiResponse } from 'next';
+import mongoose from 'mongoose';
+import Track from '@/models/track'; // Adjust the path as necessary
+import {connect} from '@/dbConfig/dbConfig'; // A utility to connect to MongoDB
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextApiRequest, res: NextApiResponse) {
+  await connect();
+
+  const { albumId } = req.query;
+
+  if (!albumId || typeof albumId !== 'string') {
+    return res.status(400).json({ message: 'Invalid albumId' });
+  }
+
   try {
-    await connect();
+    const tracks = await Track.find({ albumId: parseInt(albumId) });
 
-    const url = new URL(req.url);
-    const id = url.searchParams.get('id'); // Get the 'id' query parameter
-
-    if (!id) {
-      return NextResponse.json({ message: 'Track ID is required' }, { status: 400 });
+    if (!tracks || tracks.length === 0) {
+      return res.status(404).json({ message: 'No tracks found for this album' });
     }
 
-    const track = await Track.findById(id).exec();
-    if (!track) {
-      return NextResponse.json({ message: 'Track not found' }, { status: 404 });
-    }
-    return NextResponse.json(track, { status: 200 });
+    res.status(200).json({ tracks });
   } catch (error) {
-    return NextResponse.json({ message: (error as Error).message }, { status: 400 });
+    res.status(500).json({ message: 'Internal Server Error', error });
   }
 }

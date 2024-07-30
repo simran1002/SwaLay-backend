@@ -1,53 +1,40 @@
 import mongoose, { Schema, Document } from "mongoose";
 
+// Define the TrackStatus enum
+enum TrackStatus {
+  Draft = 0,
+  Processing = 1,
+  Approved = 2,
+  Rejected = 3,
+  Deleted = 4
+}
+
 // Define the Track interface extending Document
 export interface ITrack extends Document {
-  id: number;
-  released: string | null;
-  song: string | null;
+  albumId: mongoose.Schema.Types.ObjectId;
+  songName: string | null;
   composer: string | null;
   singer: string | null;
-  lyrics: string | null;
-  music: string | null;
+  lyricist: string | null;
   producer: string | null;
+  musicFile: string | null;
+  musicFileWav: string | null;
   isrc: string | null;
   duration: string | null;
-  url: string | null;
-  cid: number | null;
-  trackno: string | null;
-  cut: string | null;
-  link: string | null;
-  SpotifyLink: string | null;
-  AppleLink: string | null;
-  Instagram: string | null;
-  Facebook: string | null;
-  tags: string | null;
-  cut3: string | null;
-  platformLinks: string | null;
-  otherSinger: string | null;
-  otherLyricist: string | null;
-  otherProducer: string | null;
-  otherComposer: string | null;
-  category: string | null;
-  type: string | null;
+  platformLinks: { SpotifyLink: string | null, AppleLink: string | null, Instagram: string | null, Facebook: string | null } | null;
   version: string | null;
-  composerIPI: string | null;
-  iprs: number | null;
-  role: string | null;
+  trackOrderNumber: string | null;
+  status: TrackStatus;
 }
 
 // Define the schema
 const trackSchema: Schema<ITrack> = new Schema({
-  id: {
-    type: Number,
-    required: true,
-    unique: true,
+  albumId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Albums",
+    required: true
   },
-  released: {
-    type: String,
-    default: null,
-  },
-  song: {
+  songName: {
     type: String,
     default: null,
   },
@@ -59,15 +46,19 @@ const trackSchema: Schema<ITrack> = new Schema({
     type: String,
     default: null,
   },
-  lyrics: {
-    type: String,
-    default: null,
-  },
-  music: {
+  lyricist: {
     type: String,
     default: null,
   },
   producer: {
+    type: String,
+    default: null,
+  },
+  musicFile: {
+    type: String,
+    default: null,
+  },
+  musicFileWav: {
     type: String,
     default: null,
   },
@@ -79,99 +70,33 @@ const trackSchema: Schema<ITrack> = new Schema({
     type: String,
     default: null,
   },
-  url: {
-    type: String,
-    default: null,
-  },
-  cid: {
-    type: Number,
-    default: null,
-  },
-  trackno: {
-    type: String,
-    default: null,
-  },
-  cut: {
-    type: String,
-    default: null,
-  },
-  link: {
-    type: String,
-    default: null,
-  },
-  SpotifyLink: {
-    type: String,
-    default: null,
-  },
-  AppleLink: {
-    type: String,
-    default: null,
-  },
-  Instagram: {
-    type: String,
-    default: null,
-  },
-  Facebook: {
-    type: String,
-    default: null,
-  },
-  tags: {
-    type: String,
-    default: null,
-  },
-  cut3: {
-    type: String,
-    default: null,
-  },
   platformLinks: {
-    type: String,
-    default: null,
-  },
-  otherSinger: {
-    type: String,
-    default: null,
-  },
-  otherLyricist: {
-    type: String,
-    default: null,
-  },
-  otherProducer: {
-    type: String,
-    default: null,
-  },
-  otherComposer: {
-    type: String,
-    default: null,
-  },
-  category: {
-    type: String,
-    default: null,
-  },
-  type: {
-    type: String,
+    type: {
+      SpotifyLink: { type: String, default: null },
+      AppleLink: { type: String, default: null },
+      Instagram: { type: String, default: null },
+      Facebook: { type: String, default: null },
+    },
     default: null,
   },
   version: {
     type: String,
     default: null,
   },
-  composerIPI: {
+  trackOrderNumber: {
     type: String,
     default: null,
   },
-  iprs: {
+  status: {
     type: Number,
-    default: null,
-  },
-  role: {
-    type: String,
-    default: null,
+    enum: TrackStatus,
+    required: true,
+    default: TrackStatus.Draft
   },
 });
 
-trackSchema.index({ id: 1 }, { unique: true });
+trackSchema.index({ _id: 1 }, { unique: true });
 
 // Define the model
 const Track = mongoose.models.Track || mongoose.model<ITrack>("Track", trackSchema);
-
 export default Track;
