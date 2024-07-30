@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import mongoose from 'mongoose';
 import Track from '@/models/track'; // Adjust the path as necessary
-import {connect} from '@/dbConfig/dbConfig'; // A utility to connect to MongoDB
+import { connect } from '@/dbConfig/dbConfig'; // A utility to connect to MongoDB
+import response, { ResponseType } from '@/lib/response'; // Adjust the path as necessary
 
 export async function GET(req: NextApiRequest, res: NextApiResponse) {
   await connect();
@@ -9,18 +10,23 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
   const { albumId } = req.query;
 
   if (!albumId || typeof albumId !== 'string') {
-    return res.status(400).json({ message: 'Invalid albumId' });
+    const { nextResponse } = response(400, null, false, 'Invalid albumId');
+    return nextResponse;
   }
 
   try {
     const tracks = await Track.find({ albumId: parseInt(albumId) });
 
     if (!tracks || tracks.length === 0) {
-      return res.status(404).json({ message: 'No tracks found for this album' });
+      const { nextResponse } = response(404, null, false, 'No tracks found for this album');
+      return nextResponse;
     }
 
-    res.status(200).json({ tracks });
-  } catch (error) {
-    res.status(500).json({ message: 'Internal Server Error', error });
+    const { nextResponse } = response(200, tracks, true, 'Tracks retrieved successfully');
+    return nextResponse;
+  } catch (error: any) {
+    const { nextResponse } = response(500, null, false, 'Internal Server Error');
+    console.error('Internal Server Error:', error);
+    return nextResponse;
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig'; // Adjust path if necessary
 import Lyric from '@/models/lyrics'; // Adjust path if necessary
+import { response } from '@/lib/response'; // Adjust path if necessary
 
 export async function DELETE(req: NextRequest) {
   try {
@@ -10,18 +11,18 @@ export async function DELETE(req: NextRequest) {
     const trackid = searchParams.get('trackid'); // Get the 'trackid' query parameter
 
     if (!trackid) {
-      return NextResponse.json({ error: 'Track ID is required' }, { status: 400 });
+      return response(400, null, false, 'Track ID is required').nextResponse;
     }
 
     // Find and delete the lyric by ID
     const deletedLyric = await Lyric.findOneAndDelete({ Lyid: Number(trackid) }).exec();
     if (!deletedLyric) {
-      return NextResponse.json({ error: 'Lyric not found' }, { status: 404 });
+      return response(404, null, false, 'Lyric not found').nextResponse;
     }
 
-    return NextResponse.json({ message: 'Lyric deleted successfully' }, { status: 200 });
+    return response(200, { message: 'Lyric deleted successfully' }, true, 'Lyric deleted successfully').nextResponse;
   } catch (error: any) {
     console.error('Error deleting lyric:', error);
-    return NextResponse.json({ error: error.message || 'An unknown error occurred' }, { status: 500 });
+    return response(500, null, false, error.message || 'An unknown error occurred').nextResponse;
   }
 }

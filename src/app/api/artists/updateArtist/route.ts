@@ -1,16 +1,15 @@
-// src/app/api/updateArtist.ts
-
 import { NextRequest, NextResponse } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig';
 import artist from '@/models/artist';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
+import response from '@/lib/response'; // Adjust the import path according to your directory structure
 
 export async function PUT(req: NextRequest) {
   try {
     await connect();  // Connect to the database
 
-    const labelId = req.nextUrl.searchParams.get("labelId")// Assuming you're passing labelId as a query parameter
+    const labelId = req.nextUrl.searchParams.get("labelId"); // Assuming you're passing labelId as a query parameter
     const formData = await req.formData();
     
     const artistName = formData.get('artistName') as string;
@@ -24,29 +23,29 @@ export async function PUT(req: NextRequest) {
 
     // Validate required fields
     if (!artistName) {
-      return NextResponse.json({ error: 'Artist name is required', success: false }, { status: 400 });
+      return response(400, null, false, 'Artist name is required').nextResponse;
     }
 
     // Validate iprsNumber if iprs is true
     if (iprs && !iprsNumber) {
-      return NextResponse.json({ error: 'IPRS number is required when IPRS is true', success: false }, { status: 400 });
+      return response(400, null, false, 'IPRS number is required when IPRS is true').nextResponse;
     }
 
     // Find the artist to update
-    const existingartist = await artist.findById(labelId);
+    const existingArtist = await artist.findById(labelId);
 
-    if (!existingartist) {
-      return NextResponse.json({ error: 'artist not found', success: false }, { status: 404 });
+    if (!existingArtist) {
+      return response(404, null, false, 'Artist not found').nextResponse;
     }
 
     // Update artist object
-    existingartist.artistName = artistName;
-    existingartist.iprs = iprs;
-    existingartist.iprsNumber = iprsNumber;
-    existingartist.facebook = facebook;
-    existingartist.appleMusic = appleMusic;
-    existingartist.spotify = spotify;
-    existingartist.instagramUsername = instagramUsername;
+    existingArtist.artistName = artistName;
+    existingArtist.iprs = iprs;
+    existingArtist.iprsNumber = iprsNumber;
+    existingArtist.facebook = facebook;
+    existingArtist.appleMusic = appleMusic;
+    existingArtist.spotify = spotify;
+    existingArtist.instagramUsername = instagramUsername;
 
     // Handle profile image update
     if (profileImage) {
@@ -70,19 +69,15 @@ export async function PUT(req: NextRequest) {
       await writeFile(filepath, buffer);
 
       // Update profile image path in the database
-      existingartist.profileImage = filename; // Store filename or filepath as per your needs
+      existingArtist.profileImage = filename; // Store filename or filepath as per your needs
     }
 
     // Save the updated artist
-    const updatedartist = await existingartist.save();
+    const updatedArtist = await existingArtist.save();
 
-    return NextResponse.json({ message: 'artist updated successfully', artist: updatedartist, success: true }, { status: 200 });
+    return response(200, updatedArtist, true, 'Artist updated successfully').nextResponse;
   } catch (error: any) {
     console.error('Error updating artist:', error);
-    return NextResponse.json({
-      error: error.message || 'An unknown error occurred',
-      success: false,
-      status: 500
-    }, { status: 500 });
+    return response(500, null, false, error.message || 'An unknown error occurred').nextResponse;
   }
 }

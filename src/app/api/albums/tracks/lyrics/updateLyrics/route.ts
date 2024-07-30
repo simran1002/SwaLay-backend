@@ -1,7 +1,7 @@
-// pages/api/lyrics/[trackid].ts
 import { NextRequest, NextResponse } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig';  // Adjust the import path according to your file structure
 import Lyric from '@/models/lyrics';  // Adjust the import path according to your file structure
+import response, { ResponseType } from '@/lib/response'; // Adjust the import path according to your file structure
 
 export async function PUT(req: NextRequest) {
   try {
@@ -11,7 +11,7 @@ export async function PUT(req: NextRequest) {
     const trackid = searchParams.get('trackid');
 
     if (!trackid) {
-      return NextResponse.json({ error: 'Track ID is required' }, { status: 400 });
+      return response(400, null, false, 'Track ID is required').nextResponse;
     }
 
     const body = await req.json();
@@ -24,12 +24,12 @@ export async function PUT(req: NextRequest) {
     ).exec();
 
     if (!updatedLyric) {
-      return NextResponse.json({ error: 'Lyric not found' }, { status: 404 });
+      return response(404, null, false, 'Lyric not found').nextResponse;
     }
 
-    return NextResponse.json({ message: 'Lyric updated successfully', lyric: updatedLyric }, { status: 200 });
+    return response(200, updatedLyric, true, 'Lyric updated successfully').nextResponse;
   } catch (error: any) {
     console.error('Error updating lyric:', error);
-    return NextResponse.json({ error: error.message || 'An unknown error occurred' }, { status: 500 });
+    return response(500, null, false, error.message || 'An unknown error occurred').nextResponse;
   }
 }

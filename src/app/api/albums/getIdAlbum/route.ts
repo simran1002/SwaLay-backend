@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig';
 import Album from '@/models/albums';
 import mongoose from 'mongoose';
+import response, { ResponseType } from '@/lib/response'; // Adjust the path as needed
 
 export async function GET(req: NextRequest) {
   try {
@@ -12,19 +13,19 @@ export async function GET(req: NextRequest) {
     const id = searchParams.get('id');
 
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-      return NextResponse.json({ error: 'Valid Album ID is required' }, { status: 400 });
+      return response(400, null, false, 'Valid Album ID is required').nextResponse;
     }
 
     // Find the album by ID
     const album = await Album.findById(id);
 
     if (!album) {
-      return NextResponse.json({ error: 'Album not found' }, { status: 404 });
+      return response(404, null, false, 'Album not found').nextResponse;
     }
 
-    return NextResponse.json({ album }, { status: 200 });
+    return response(200, album, true, 'Album retrieved successfully').nextResponse;
   } catch (error: any) {
     console.error('Error fetching album:', error);
-    return NextResponse.json({ error: error.message || 'An unknown error occurred' }, { status: 500 });
+    return response(500, null, false, error.message || 'An unknown error occurred').nextResponse;
   }
 }

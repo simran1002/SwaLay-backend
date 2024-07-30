@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig';
 import mongoose from 'mongoose';
 import Youtube from '../../../../models/youtube'; // adjust the path as necessary
+import response from '@/lib/response'; // adjust the path as necessary
 
 export async function POST(req: NextRequest) {
     try {
         await connect();
-        
+
         const body = await req.json();
         const { id, albumId, trackId, link, title, status, comment } = body;
 
@@ -22,10 +23,16 @@ export async function POST(req: NextRequest) {
 
         await newYoutube.save();
 
-        return NextResponse.json({ message: 'Youtube copyright entry created', data: newYoutube }, { status: 201 });
-    } catch (error) {
+        // Use the standardized response function
+        return response(201, newYoutube, true, 'Youtube copyright entry created').nextResponse;
+    } catch (error: unknown) {
         console.error('Internal server error:', error);
-        return NextResponse.json({ message: 'Internal server error', error }, { status: 500 });
+        
+        // Handle error type
+        const errorMessage = (error instanceof Error) ? error.message : 'An unexpected error occurred';
+        
+        // Use the standardized response function
+        return response(500, errorMessage, false, 'Internal server error').nextResponse;
     } finally {
         mongoose.connection.close();
     }

@@ -1,8 +1,7 @@
-import { NextResponse } from 'next/server';
-import mongoose from 'mongoose';
 import Album from '@/models/albums'; // Ensure this path is correct
 import Track from '@/models/track'; // Ensure this path is correct
 import { connect } from '@/dbConfig/dbConfig'; // Ensure this path is correct
+import response from '@/lib/response'; // Adjust the path according to your file structure
 
 export async function GET() {
   try {
@@ -15,11 +14,11 @@ export async function GET() {
     // Get the total number of tracks
     const totalTracks = await Track.countDocuments();
 
-    // Respond with the totals
-    return NextResponse.json({ totalAlbums, totalTracks }, { status: 200 });
+    // Respond with the totals using the response function
+    return response(200, { totalAlbums, totalTracks }, true, 'Data fetched successfully').nextResponse;
   } catch (error) {
-    // Handle errors
+    // Handle errors using the response function
     console.error(error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return response(500, null, false, 'Internal Server Error').nextResponse;
   }
 }

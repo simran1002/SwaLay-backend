@@ -1,8 +1,7 @@
-// src/app/api/profile/bankDetails/update/route.ts
-
 import { NextRequest, NextResponse } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig';
 import ProfileBankDetails from '@/models/profileBank';
+import response from '@/lib/response'; // Adjust the path to where you defined the response function
 
 export async function PUT(request: NextRequest) {
   try {
@@ -12,7 +11,7 @@ export async function PUT(request: NextRequest) {
     const { labelId, ...updateData } = body;
 
     if (!labelId) {
-      return NextResponse.json({ error: 'labelId is required' }, { status: 400 });
+      return response(400, null, false, 'labelId is required').nextResponse;
     }
 
     const updatedBankDetails = await ProfileBankDetails.findOneAndUpdate(
@@ -22,12 +21,12 @@ export async function PUT(request: NextRequest) {
     );
 
     if (!updatedBankDetails) {
-      return NextResponse.json({ error: 'Bank details not found' }, { status: 404 });
+      return response(404, null, false, 'Bank details not found').nextResponse;
     }
 
-    return NextResponse.json(updatedBankDetails);
-  } catch (error) {
+    return response(200, updatedBankDetails, true, 'Bank details updated successfully').nextResponse;
+  } catch (error: any) {
     console.error('Error updating bank details:', error);
-    return NextResponse.json({ error: 'Error updating bank details' }, { status: 400 });
+    return response(500, null, false, 'Error updating bank details').nextResponse;
   }
 }

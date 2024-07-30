@@ -1,7 +1,7 @@
-// pages/api/tracks/index.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig';
 import Track from '@/models/track';
+import response from '@/lib/response'; // Adjust import path as needed
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,9 +11,11 @@ export async function POST(req: NextRequest) {
     const newTrack = new Track(body);
     const savedTrack = await newTrack.save();
 
-    return NextResponse.json({ message: 'Track created successfully', track: savedTrack }, { status: 201 });
+    // Use the response function to standardize the response
+    return response(201, { track: savedTrack }, true, 'Track created successfully').nextResponse;
   } catch (error: any) {
     console.error('Error creating track:', error);
-    return NextResponse.json({ error: error.message || 'An unknown error occurred' }, { status: 500 });
+    // Use the response function to handle errors
+    return response(500, null, false, error.message || 'An unknown error occurred').nextResponse;
   }
 }

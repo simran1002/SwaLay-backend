@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig';
 import Album from '@/models/albums';
+import response from '@/lib/response'; // Adjust the import path as needed
 
 export async function DELETE(req: NextRequest) {
   try {
@@ -10,19 +11,19 @@ export async function DELETE(req: NextRequest) {
     const id = searchParams.get('id');
 
     if (!id) {
-      return NextResponse.json({ error: 'Album ID is required' }, { status: 400 });
+      return response(400, null, false, 'Album ID is required').nextResponse;
     }
 
     // Find and delete the album by ID
-    const deletedAlbum = await Album.findOneAndDelete({ id: Number(id) });
+    const deletedAlbum = await Album.findByIdAndDelete(id);
 
     if (!deletedAlbum) {
-      return NextResponse.json({ error: 'Album not found' }, { status: 404 });
+      return response(404, null, false, 'Album not found').nextResponse;
     }
 
-    return NextResponse.json({ message: 'Album deleted successfully' }, { status: 200 });
+    return response(200, null, true, 'Album deleted successfully').nextResponse;
   } catch (error: any) {
     console.error('Error deleting album:', error);
-    return NextResponse.json({ error: error.message || 'An unknown error occurred' }, { status: 500 });
+    return response(500, error.message || 'An unknown error occurred', false, 'Internal Server Error').nextResponse;
   }
 }

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import Payment from '@/models/payments'; // Ensure this path is correct
 import { connect } from '@/dbConfig/dbConfig'; // Ensure this path is correct
+import response from '@/lib/response'; // Adjust the path if necessary
 
 export async function GET(request: Request) {
   try {
@@ -14,17 +15,17 @@ export async function GET(request: Request) {
 
     // Validate the labelId
     if (!labelId || Array.isArray(labelId)) {
-      return NextResponse.json({ message: 'Invalid or missing labelId' }, { status: 400 });
+      return response(400, null, false, 'Invalid or missing labelId').nextResponse;
     }
 
     // Fetch payments by labelId
     const payments = await Payment.find({ labelId: new mongoose.Types.ObjectId(labelId) });
 
     // Respond with the payments
-    return NextResponse.json(payments, { status: 200 });
+    return response(200, payments, true, 'Payments fetched successfully').nextResponse;
   } catch (error) {
     // Handle errors
     console.error(error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return response(500, null, false, 'Internal Server Error').nextResponse;
   }
 }

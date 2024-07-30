@@ -14,6 +14,7 @@ function isSameMonthAndYear(date1: Date, date2: Date): boolean {
 // Handle the POST request to create a new payment
 export async function POST(request: NextRequest) {
   await connect();
+
   try {
     // Parse the request body
     const reqBody = await request.json();

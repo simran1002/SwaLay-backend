@@ -3,6 +3,7 @@ import { connect } from '@/dbConfig/dbConfig';
 import artist from '@/models/artist';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
+import { response } from '@/lib/response'; // Import the response function
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,12 +22,12 @@ export async function POST(req: NextRequest) {
 
     // Validate required fields
     if (!artistName) {
-      return NextResponse.json({ error: 'artist name is required', success: false }, { status: 400 });
+      return response(400, null, false, 'Artist name is required').nextResponse;
     }
 
     // Validate iprsNumber if iprs is true
     if (iprs && !iprsNumber) {
-      return NextResponse.json({ error: 'IPRS number is required when IPRS is true', success: false }, { status: 400 });
+      return response(400, null, false, 'IPRS number is required when IPRS is true').nextResponse;
     }
 
     // Create artist object
@@ -66,16 +67,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Create and save the new artist
-    const newartist = new artist(artistData);
-    const savedartist = await newartist.save();
+    const newArtist = new artist(artistData);
+    const savedArtist = await newArtist.save();
 
-    return NextResponse.json({ message: 'Artist created successfully', artist: savedartist, success: true }, { status: 201 });
+    return response(201, savedArtist, true, 'Artist created successfully').nextResponse;
   } catch (error: any) {
     console.error('Error creating artist:', error);
-    return NextResponse.json({
-      error: error.message || 'An unknown error occurred',
-      success: false,
-      status: 500
-    }, { status: 500 });
+    return response(500, null, false, error.message || 'An unknown error occurred').nextResponse;
   }
 }
