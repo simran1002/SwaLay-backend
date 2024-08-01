@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig';
-import Album from '@/models/albums';
-import { response } from '@/lib/response'; // Adjust the import path as needed
+import Album, { AlbumStatus } from '@/models/albums';
+import { response } from '@/lib/response'; 
 
 export async function PATCH(req: NextRequest) {
   try {
-    await connect(); // Connect to the database
+    await connect(); 
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
@@ -16,8 +16,25 @@ export async function PATCH(req: NextRequest) {
 
     const body = await req.json();
 
-    // Find the album by ID and update it
-    const updatedAlbum = await Album.findByIdAndUpdate(id, body, {
+    if (body.status !== undefined && !Object.values(AlbumStatus).includes(body.status)) {
+      return response(400, null, false, 'Invalid status value').nextResponse;
+    }
+
+    if (body.status === AlbumStatus.Rejected && !body.comment) {
+      return response(400, null, false, 'Comment is required when rejecting an album').nextResponse;
+    }
+
+    if (body.photoUrl && typeof body.photoUrl !== 'string') {
+      return response(400, null, false, 'Invalid photo URL').nextResponse;
+    }
+
+    const updateFields = { ...body };
+    if (body.photoUrl) {
+      updateFields.thumbnail = body.photoUrl;
+      delete updateFields.photoUrl;
+    }
+
+    const updatedAlbum = await Album.findByIdAndUpdate(id, updateFields, {
       new: true,
       runValidators: true,
     });
