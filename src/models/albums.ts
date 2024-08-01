@@ -1,5 +1,13 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+
+enum AlbumStatus {
+    Draft = 0, // on information submit
+    Processing = 1, // on final submit
+    Approved = 2,
+    Rejected = 3,
+}
+
 // Define the interface for the Album document
 interface IAlbum extends Document {
     labelId: mongoose.Schema.Types.ObjectId;
@@ -7,15 +15,15 @@ interface IAlbum extends Document {
     thumbnail?: string | null;
     language?: string | null;
     genre?: string | null;
-    tags?: string[] | null;
     releasedate?: Date | null;
-    duration: string;
-    status?: number;
-    tracks?: number;
+    totalTracks?: number;
     upc?: string | null;
     artist?: string | null;
     cline?: string | null;
     pline?: string | null;
+    status: AlbumStatus; //update album status 
+    tags?: string | null; 
+    platformLinks: { SpotifyLink: string | null, AppleLink: string | null, Instagram: string | null, Facebook: string | null } | null; //albums links
     comment: string;
 }
 
@@ -42,30 +50,13 @@ const albumSchema: Schema = new Schema({
         type: String,
         default: null
     },
-    tags: {
-        type: [String],
-        default: []
-    },
     releasedate: {
         type: Date,
         default: null
     },
-    url: {
-        type: String,
-        required: true
-    },
-    duration: {
-        type: String,
-        required: true
-    },
-    status: {
-        type: Number,
-        default: null
-    },
-    tracks: {
+    totalTracks: {
         type: Number,
         default: 0,
-        max: 99999999999
     },
     upc: {
         type: String,
@@ -83,9 +74,27 @@ const albumSchema: Schema = new Schema({
         type: String,
         default: null
     },
+    status: {
+        type: Number,
+        enum: AlbumStatus,
+        required: true,
+        default: AlbumStatus.Draft
+    },
+    tags: {
+        type: String,
+        default: '{}'
+    },
+    platformLinks: {
+        type: {
+            SpotifyLink: { type: String, default: null },
+            AppleLink: { type: String, default: null },
+            Instagram: { type: String, default: null },
+            Facebook: { type: String, default: null },
+        },
+        default: null,
+    },
     comment: {
         type: String,
-        required: true,
         default: null
     },
     date: {
