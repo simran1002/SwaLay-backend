@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+
 enum AlbumStatus {
     Draft = 0, // on information submit
     Processing = 1, // on final submit
@@ -20,9 +21,9 @@ interface IAlbum extends Document {
     artist?: string | null;
     cline?: string | null;
     pline?: string | null;
-    status: AlbumStatus; // update album status
-    tags?: string | null;
-    platformLinks: { SpotifyLink: string | null, AppleLink: string | null, Instagram: string | null, Facebook: string | null } | null; // albums links
+    status: AlbumStatus; //update album status 
+    tags?: string | null; 
+    platformLinks: { SpotifyLink: string | null, AppleLink: string | null, Instagram: string | null, Facebook: string | null } | null; //albums links
     comment: string;
 }
 
@@ -106,5 +107,4 @@ const albumSchema: Schema = new Schema({
 // Create the model for the Album collection
 const Album = mongoose.models.Album || mongoose.model<IAlbum>('Album', albumSchema);
 
-export { AlbumStatus };
 export default Album;
