@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-
 enum AlbumStatus {
     Draft = 0, // on information submit
     Processing = 1, // on final submit
@@ -21,10 +20,11 @@ interface IAlbum extends Document {
     artist?: string | null;
     cline?: string | null;
     pline?: string | null;
-    status: AlbumStatus; //update album status 
+    status: AlbumStatus; // update album status 
     tags?: string | null; 
-    platformLinks: { SpotifyLink: string | null, AppleLink: string | null, Instagram: string | null, Facebook: string | null } | null; //albums links
+    platformLinks: { SpotifyLink: string | null, AppleLink: string | null, Instagram: string | null, Facebook: string | null } | null; // albums links
     comment: string;
+    image?: string | null; // Add image field
 }
 
 // Define the schema for the Album collection
@@ -94,6 +94,10 @@ const albumSchema: Schema = new Schema({
         default: null,
     },
     comment: {
+        type: String,
+        default: null
+    },
+    image: {
         type: String,
         default: null
     },
