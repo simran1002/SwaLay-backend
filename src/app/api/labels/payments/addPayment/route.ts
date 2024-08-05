@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Payment from '../../../../models/payments';
-import { connect } from '../../../../dbConfig/dbConfig';
-import response from '../../../../lib/response';
+import Payment from '@/models/payments';
+import { connect } from '@/dbConfig/dbConfig';
+import response from '@/lib/response';
 
 // Helper function to check if a date is in the same month and year
 function isSameMonthAndYear(date1: Date, date2: Date): boolean {
