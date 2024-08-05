@@ -31,7 +31,7 @@ const streamToNodeStream = (readableStream: ReadableStream<Uint8Array>): Readabl
 async function uploadChunkToS3(chunkBuffer: Buffer, fileName: string, chunkIndex: number) {
   const params = {
     Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME as string,
-    Key: `uploads/${fileName}-chunk-${chunkIndex}`,
+    Key: `client/tracks/${fileName}-chunk-${chunkIndex}`,
     Body: chunkBuffer,
     ContentType: 'application/octet-stream',
   };
