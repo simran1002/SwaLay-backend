@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connect } from '@/dbConfig/dbConfig';
-import Payment from '../../../../models/payment'; // Adjust the path as necessary
+import Payment from '@/models/payments'; // Adjust the path as necessary
 import { response } from '@/lib/response'; // Adjust the path as necessary
 
 export async function PATCH(req: NextRequest) {
