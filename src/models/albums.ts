@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, ObjectId } from 'mongoose';
 
 enum AlbumStatus {
     Draft = 0, // on information submit
@@ -9,7 +9,7 @@ enum AlbumStatus {
 
 // Define the interface for the Album document
 interface IAlbum extends Document {
-    labelId: mongoose.Schema.Types.ObjectId;
+    labelId: ObjectId;
     title?: string | null;
     thumbnail?: string | null;
     language?: string | null;
@@ -82,7 +82,7 @@ const albumSchema: Schema = new Schema({
     },
     tags: {
         type: String,
-        default: '{}'
+        default: null
     },
     platformLinks: {
         type: {
@@ -111,4 +111,5 @@ const albumSchema: Schema = new Schema({
 // Create the model for the Album collection
 const Album = mongoose.models.Album || mongoose.model<IAlbum>('Album', albumSchema);
 
+export { AlbumStatus };
 export default Album;
