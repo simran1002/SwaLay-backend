@@ -20,6 +20,7 @@ export interface IMarketingPitch extends Document {
   promotionLinks: string[];
   musicVideoLink?: string;
   addFile?: Buffer; // For file uploads; if you handle files differently, adjust accordingly
+  status: string; // New field added here
 }
 
 const marketingPitchSchema: Schema = new Schema({
@@ -104,6 +105,12 @@ const marketingPitchSchema: Schema = new Schema({
   addFile: {
     type: Buffer, // Assuming files are stored as binary data; adjust as necessary
     required: false,
+  },
+  status: {
+    type: String,
+    required: true,
+    enum: ['draft', 'submitted', 'approved', 'rejected'], // Example enum values
+    default: 'draft',
   },
 });
 
