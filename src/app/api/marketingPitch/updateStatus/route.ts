@@ -14,11 +14,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     try {
-      await connect(); // Connect to MongoDB
+      await connect();
       const marketingPitch = await MarketingPitch.findByIdAndUpdate(
         id,
         { status },
-        { new: true } // Return the updated document
+        { new: true } 
       );
 
       if (marketingPitch) {

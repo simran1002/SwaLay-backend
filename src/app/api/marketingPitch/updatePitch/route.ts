@@ -6,7 +6,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'PUT') {
     const { id } = req.query;
     try {
-      await connect(); // Connect to MongoDB
+      await connect();
       const marketingPitch = await MarketingPitch.findByIdAndUpdate(id, req.body, { new: true });
       if (marketingPitch) {
         res.status(200).json(marketingPitch);

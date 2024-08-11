@@ -5,7 +5,7 @@ import { connect } from '@/dbConfig/dbConfig';
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     try {
-      await connect(); // Connect to MongoDB
+      await connect(); 
       const marketingPitch = new MarketingPitch(req.body);
       await marketingPitch.save();
       res.status(201).json(marketingPitch);

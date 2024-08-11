@@ -6,7 +6,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'DELETE') {
     const { id } = req.query;
     try {
-      await connect(); // Connect to MongoDB
+      await connect();
       const result = await MarketingPitch.findByIdAndDelete(id);
       if (result) {
         res.status(200).json({ message: 'Marketing pitch deleted successfully' });

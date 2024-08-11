@@ -5,7 +5,7 @@ import { connect } from '@/dbConfig/dbConfig';
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     try {
-      await connect(); // Connect to MongoDB
+      await connect(); 
       const marketingPitches = await MarketingPitch.find();
       res.status(200).json(marketingPitches);
     } catch (error) {
