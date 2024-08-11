@@ -4,10 +4,10 @@ import { connect } from '@/dbConfig/dbConfig';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
-    const { id } = req.query;
+    const { albumId } = req.query;
     try {
       await connect(); // Connect to MongoDB
-      const marketingPitch = await MarketingPitch.findById(id);
+      const marketingPitch = await MarketingPitch.findOne({ albumId });
       if (marketingPitch) {
         res.status(200).json(marketingPitch);
       } else {
