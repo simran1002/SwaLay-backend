@@ -16,6 +16,7 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@syncfusion/ej2-inputs": "^26.1.41",
     "@types/mongoose": "^5.11.97",
+    "@types/xlsx": "^0.0.36",
     "aws-sdk": "^2.1667.0",
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
@@ -40,6 +41,7 @@
     "shadcn-ui": "^0.2.3",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
+    "xlsx": "^0.18.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {

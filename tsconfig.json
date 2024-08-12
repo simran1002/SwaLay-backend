@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/dbConfig/dbConfig.ts", "src/context/UserProvider.tsx", "src/components/HomeStatsCard.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/dbConfig/dbConfig.ts", "src/context/UserProvider.tsx", "src/components/HomeStatsCard.js", "src/app/api/albums/getAlbum[id]"],
   "exclude": ["node_modules"]
 }
