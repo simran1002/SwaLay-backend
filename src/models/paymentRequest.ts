@@ -1,8 +1,5 @@
-// models/paymentRequest.model.ts
-
 import mongoose, { Document, Schema } from 'mongoose';
 
-// Define the status enum
 export enum PaymentStatus {
   PENDING = 'Pending',
   COMPLETED = 'Completed',
@@ -23,7 +20,7 @@ const PaymentRequestSchema: Schema = new Schema({
   date: { type: Date, required: true },
   status: { 
     type: String, 
-    enum: Object.values(PaymentStatus), // Use the enum values
+    enum: Object.values(PaymentStatus), 
     required: true 
   },
   comment: { type: String }

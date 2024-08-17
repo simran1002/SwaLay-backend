@@ -1,37 +1,38 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { connect } from '@/dbConfig/dbConfig';
 import PaymentRequest, { PaymentStatus } from '@/models/paymentRequest';
+import response from '@/lib/response'; 
 
-connect();
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'POST') {
-    return addPaymentRequest(req, res);
-  }
-  return res.status(405).end();
-}
-
-const addPaymentRequest = async (req: NextApiRequest, res: NextApiResponse) => {
+export async function POST(req: NextRequest) {
   try {
-    const { labelId, amount, date, status, comment } = req.body;
+    await connect(); 
 
-    if (typeof labelId !== 'string' || typeof amount !== 'number' || typeof status !== 'string') {
-      return res.status(400).json({ message: 'Invalid data' });
+    const body = await req.json();
+
+    const { labelId, amount, date, status, comment } = body;
+
+    if (!labelId || !amount || !date || !status) {
+      return response(400, null, false, 'Missing required fields').nextResponse;
     }
 
-    const parsedDate = new Date(date);
-    if (isNaN(parsedDate.getTime())) {
-      return res.status(400).json({ message: 'Invalid date format' });
+    if (!Object.values(PaymentStatus).includes(status)) {
+      return response(400, null, false, 'Invalid payment status').nextResponse;
     }
 
-    if (!Object.values(PaymentStatus).includes(status as PaymentStatus)) {
-      return res.status(400).json({ message: 'Invalid status' });
-    }
+    const newPaymentRequest = new PaymentRequest({
+      labelId,
+      amount,
+      date,
+      status,
+      comment,
+    });
 
-    const newPaymentRequest = new PaymentRequest({ labelId, amount, date: parsedDate, status: status as PaymentStatus, comment });
     const savedPaymentRequest = await newPaymentRequest.save();
-    return res.status(201).json(savedPaymentRequest);
-  } catch (error) {
-    return res.status(500).json({ message: 'Server error', error });
+
+    return response(201, savedPaymentRequest, true, 'Payment request created successfully').nextResponse;
+  } catch (error: any) {
+    console.error('Error creating payment request:', error);
+    return response(500, null, false, error.message || 'An unknown error occurred').nextResponse;
   }
-};
+}

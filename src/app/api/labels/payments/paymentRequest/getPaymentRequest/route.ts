@@ -20,7 +20,7 @@ const getPaymentRequests = async (req: NextApiRequest, res: NextApiResponse) => 
     if (labelId && typeof labelId === 'string') {
       filter.labelId = labelId;
     }
-    const paymentRequests = await PaymentRequest.find(filter).sort({ date: -1 }); // Sort by date in descending order
+    const paymentRequests = await PaymentRequest.find(filter).sort({ date: -1 });
     return res.status(200).json(paymentRequests);
   } catch (error) {
     return res.status(500).json({ message: 'Server error', error });
