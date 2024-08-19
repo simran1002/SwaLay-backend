@@ -1,5 +1,3 @@
-// src/models/artist.ts
-
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface Iartist extends Document {
@@ -37,7 +35,7 @@ const artistSchema: Schema = new Schema({
     type: String,
     validate: {
       validator: function (v: string) {
-        return /^[a-zA-Z0-9._]+$/.test(v); // Only alphanumeric characters, dots, and underscores allowed
+        return /^[a-zA-Z0-9._]+$/.test(v); 
       },
       message: (props: any) => `${props.value} is not a valid Facebook username!`
     }
@@ -46,7 +44,7 @@ const artistSchema: Schema = new Schema({
     type: String,
     validate: {
       validator: function (v: string) {
-        return /^[a-zA-Z0-9._]+$/.test(v); // Only alphanumeric characters, dots, and underscores allowed
+        return /^[a-zA-Z0-9._]+$/.test(v); 
       },
       message: (props: any) => `${props.value} is not a valid Apple Music username!`
     }
@@ -55,7 +53,7 @@ const artistSchema: Schema = new Schema({
     type: String,
     validate: {
       validator: function (v: string) {
-        return /^[a-zA-Z0-9._]+$/.test(v); // Only alphanumeric characters, dots, and underscores allowed
+        return /^[a-zA-Z0-9._]+$/.test(v); 
       },
       message: (props: any) => `${props.value} is not a valid Spotify username!`
     }
@@ -64,7 +62,7 @@ const artistSchema: Schema = new Schema({
     type: String,
     validate: {
       validator: function (v: string) {
-        return /^[a-zA-Z0-9._]+$/.test(v); // Only alphanumeric characters, dots, and underscores allowed
+        return /^[a-zA-Z0-9._]+$/.test(v);
       },
       message: (props: any) => `${props.value} is not a valid Instagram username!`
     }

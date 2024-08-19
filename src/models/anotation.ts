@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-// Define the interface for the Anotation document
 interface IAnotation extends Document {
   id: number;
   label: string;
@@ -9,14 +8,13 @@ interface IAnotation extends Document {
   stamp?: Date;
 }
 
-// Define the schema for the Anotation collection
 const AnotationSchema: Schema = new Schema({
   id: {
     type: Number,
     required: true,
     unique: true,
     min: 0,
-    max: 99999999999, // Maximum value for 11 digits
+    max: 99999999999, 
   },
   label: {
     type: String,
@@ -36,10 +34,8 @@ const AnotationSchema: Schema = new Schema({
   },
 });
 
-// Create a unique index on the id field
 AnotationSchema.index({ id: 1 }, { unique: true });
 
-// Create the model for the Anotation collection
 const Anotation = mongoose.models.Anotation || mongoose.model<IAnotation>('Anotation', AnotationSchema);
 
 export default Anotation;
