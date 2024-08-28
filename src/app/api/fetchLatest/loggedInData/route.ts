@@ -5,15 +5,15 @@ import Album from '@/models/albums';
 import Artist from '@/models/oldArtists';
 import response from '@/lib/response';
 
-// Assuming you have a context method to fetch user details
-import { getContext } from '@/lib/context';
+// Use a method to fetch user context from request headers or other means
+import { getUserFromRequest } from '@/lib/userContext'; // You need to implement this
 
 export async function GET(req: NextRequest) {
   try {
     await connect();
 
-    // Fetch user context (labelId) using a context method
-    const context = await getContext(req); // This method should be implemented to get context details
+    // Fetch user context (labelId) from request headers or other means
+    const context = await getUserFromRequest(req); // Implement this function to get context from the request
     const labelId = context?.user?._id;
 
     if (!labelId) {
