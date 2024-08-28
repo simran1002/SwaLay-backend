@@ -35,21 +35,21 @@ export async function GET(req: NextRequest) {
       },
       {
         $project: {
-          _id: 1, // Include album ID
-          title: 1, // Include album title
-          labelId: 1, // Include label ID
-          language: 1, // Include album language
-          genre: 1, // Include album genre
-          releasedate: 1, // Include release date
-          totalTracks: 1, // Include total tracks
-          upc: 1, // Include UPC
-          cline: 1, // Include C-line
-          pline: 1, // Include P-line
-          status: 1, // Include album status
-          platformLinks: 1, // Include platform links
-          comment: 1, // Include comments
-          image: 1, // Include image
-          'artistDetails.name': 1, // Include artist name
+          _id: 1, 
+          title: 1,
+          labelId: 1,
+          language: 1,
+          genre: 1, 
+          releasedate: 1, 
+          totalTracks: 1, 
+          upc: 1, 
+          cline: 1, 
+          pline: 1, 
+          status: 1, 
+          platformLinks: 1, 
+          comment: 1,
+          image: 1, 
+          'artistDetails.name': 1, 
         }
       }
     ]);

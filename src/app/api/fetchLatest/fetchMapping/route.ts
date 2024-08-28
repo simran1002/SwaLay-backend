@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { connect } from '@/dbConfig/dbConfig';
 import Album from '@/models/albums';
-import response from '@/lib/response'; // Import the response function
+import response from '@/lib/response';
 import Artist from '@/models/oldArtists';
 
 export async function GET(req: NextRequest) {
@@ -24,16 +24,14 @@ export async function GET(req: NextRequest) {
       return response(404, null, false, 'No albums found for this label').nextResponse;
     }
 
-    // Map albums to the required format: { albumId: title, artistId: artist }
     const albumData = await Promise.all(
       albums.map(async (album) => {
-        // Assuming you have an Artist model to fetch artist name by ID
         const artistName = await Artist.findById(album.artist).select('name');
         return {
           albumId: album._id,
           title: album.title,
           artistId: album.artist,
-          artistName: artistName ? artistName.name : null, // Fallback if artist is not found
+          artistName: artistName ? artistName.name : null, 
         };
       })
     );

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { connect } from '@/dbConfig/dbConfig';
 import Album from '@/models/albums';
-import Artist from '@/models/artist'; // Assuming you have an Artist model
+import Artist from '@/models/artist';
 import response from '@/lib/response';
 
 export async function GET(req: NextRequest) {
@@ -17,32 +17,31 @@ export async function GET(req: NextRequest) {
 
     const albumObjectId = new mongoose.Types.ObjectId(albumId);
 
-    // Aggregate to get album details by albumId
     const albumDetails = await Album.aggregate([
       {
-        $match: { _id: albumObjectId } // Match the album by albumId
+        $match: { _id: albumObjectId }
       },
       {
         $lookup: {
-          from: 'artists', // Name of the artist collection
-          localField: 'artist',
-          foreignField: '_id',
-          as: 'artistDetails'
+          from: 'artists',
+          localField: 'artist', 
+          foreignField: '_id', 
+          as: 'artistDetails' 
         }
       },
       {
-        $unwind: '$artistDetails' // Unwind the artist details array
+        $unwind: '$artistDetails'
       },
       {
         $project: {
-          _id: 0, // Exclude album ID (if not needed)
-          title: 1, // Include album title
-          image: 1, // Include album image
-          'artistDetails.name': 1, // Include artist name
-          'platformLinks.SpotifyLink': 1, // Include Spotify link
-          'platformLinks.AppleLink': 1, // Include Apple Music link
-          'platformLinks.Instagram': 1, // Include Instagram link
-          'platformLinks.Facebook': 1, // Include Facebook link
+          _id: 0,
+          title: 1,
+          image: 1, 
+          'artistDetails.name': 1, 
+          'platformLinks.SpotifyLink': 1,
+          'platformLinks.AppleLink': 1, 
+          'platformLinks.Instagram': 1,
+          'platformLinks.Facebook': 1 
         }
       }
     ]);
