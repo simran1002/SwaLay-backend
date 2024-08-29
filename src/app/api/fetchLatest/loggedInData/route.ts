@@ -5,15 +5,12 @@ import Album from '@/models/albums';
 import Artist from '@/models/oldArtists';
 import response from '@/lib/response';
 
-// Use a method to fetch user context from request headers or other means
-import { getUserFromRequest } from '@/lib/userContext'; // You need to implement this
+import { getUserFromRequest } from '@/lib/userContext'; 
 
 export async function GET(req: NextRequest) {
   try {
     await connect();
-
-    // Fetch user context (labelId) from request headers or other means
-    const context = await getUserFromRequest(req); // Implement this function to get context from the request
+    const context = await getUserFromRequest(req); 
     const labelId = context?.user?._id;
 
     if (!labelId) {
@@ -22,14 +19,12 @@ export async function GET(req: NextRequest) {
 
     const labelObjectId = new mongoose.Types.ObjectId(labelId);
 
-    // Fetch all albums by labelId
     const albums = await Album.find({ labelId: labelObjectId }).select('_id title artist thumbnail genre releasedate status totalTracks tags comment');
 
     if (!albums.length) {
       return response(404, null, false, 'No albums found for this label').nextResponse;
     }
 
-    // Fetch artist details for each album
     const albumData = await Promise.all(
       albums.map(async (album) => {
         const artistDetails = album.artist ? await Artist.findById(album.artist).select('artistName profileImage isSinger isLyricist isComposer isProducer') : null;
